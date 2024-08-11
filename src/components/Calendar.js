@@ -99,8 +99,8 @@ const Calendar = () => {
   };
 
   const renderEventContent = (eventInfo) => {
-    const formattedDate = moment(eventInfo.event.time).format("LL");
-    const formattedTime = moment(eventInfo.event.time).format("LT");
+    const formattedDate = moment(eventInfo.event.start).format("LL");
+    const formattedTime = moment(eventInfo.event.start).format("LT");
     return (
       <Box
         onClick={() => handleEventClick(eventInfo.event)}

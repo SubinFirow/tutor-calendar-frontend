@@ -26,7 +26,15 @@ const handleError = (error) => {
 };
 
 export const getItems = () => {
-  return axiosInstance.get(`/`).then(handleResponse).catch(handleError);
+  return axios
+    .get(process.env.REACT_APP_BASEURL, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: getToken(),
+      },
+    })
+    .then(handleResponse)
+    .catch(handleError);
 };
 
 export const getItemById = (id) => {
@@ -64,14 +72,6 @@ export const searchItems = (query) => {
     .get(`/items/search`, { params: { q: query } })
     .then(handleResponse)
     .catch(handleError);
-};
-
-export const isAuthenticated = () => {
-  const token = getToken();
-  if (!token || token === "null" || token === "undefined") {
-    return false;
-  }
-  return true;
 };
 
 export const logout = () => {
