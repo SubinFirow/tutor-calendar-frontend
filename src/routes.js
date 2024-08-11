@@ -1,11 +1,6 @@
 // src/routes.js
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useSearchParams,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Calendar from "./components/Calendar";
 import LoginPage from "./components/Login";
