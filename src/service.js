@@ -1,11 +1,13 @@
 import axios from "axios";
 
+export const getToken = () => localStorage.getItem("token");
+
 const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_BASEURL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
-    Authorization: "",
+    Authorization: getToken(),
   },
 });
 
@@ -24,7 +26,7 @@ const handleError = (error) => {
 };
 
 export const getItems = () => {
-  return axiosInstance.get("/").then(handleResponse).catch(handleError);
+  return axiosInstance.get(`/`).then(handleResponse).catch(handleError);
 };
 
 export const getItemById = (id) => {
@@ -42,19 +44,19 @@ export const updateItem = (data) => {
     .catch(handleError);
 };
 
-export const deleteItem = (id) => {
-  return axiosInstance.delete(`/${id}`).then(handleResponse).catch(handleError);
+export const deleteItem = (id, googleCalendarEventId) => {
+  return axiosInstance
+    .delete(`/${id}?googleCalendarEventId=${googleCalendarEventId}`)
+    .then(handleResponse)
+    .catch(handleError);
 };
 
 export const patchItem = (id, data) => {
   return axiosInstance.patch(`/items/${id}`, data).catch(handleError);
 };
 
-export const loginUser = (credentials) => {
-  return axiosInstance
-    .post("/auth/login", credentials)
-    .then(handleResponse)
-    .catch(handleError);
+export const loginUser = () => {
+  window.location.href = "http://localhost:8000/auth/google";
 };
 
 export const searchItems = (query) => {
@@ -62,4 +64,16 @@ export const searchItems = (query) => {
     .get(`/items/search`, { params: { q: query } })
     .then(handleResponse)
     .catch(handleError);
+};
+
+export const isAuthenticated = () => {
+  const token = getToken();
+  if (!token || token === "null" || token === "undefined") {
+    return false;
+  }
+  return true;
+};
+
+export const logout = () => {
+  localStorage.removeItem("token");
 };

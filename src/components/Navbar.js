@@ -3,8 +3,16 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import { logout } from "../service";
+import { useNavigate } from "react-router-dom";
 
 function Navbar() {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    navigate("/login");
+    logout();
+  };
+
   return (
     <AppBar
       position="static"
@@ -16,7 +24,13 @@ function Navbar() {
         </Typography>
         <Button color="inherit">Home</Button>
         <Button color="inherit">About</Button>
-        <Button color="inherit">Contact</Button>
+        <Button
+          variant="contained"
+          onClick={handleLogout}
+          sx={{ bgcolor: "#333333", "&:hover": { bgcolor: "#666666" } }}
+        >
+          Logout
+        </Button>
       </Toolbar>
     </AppBar>
   );

@@ -14,6 +14,7 @@ import {
 } from "../service";
 import toast, { Toaster } from "react-hot-toast";
 import moment from "moment";
+import Navbar from "./Navbar";
 
 const Calendar = () => {
   const [events, setEvents] = useState([]);
@@ -48,7 +49,10 @@ const Calendar = () => {
 
   const handleEdit = async (event) => {
     try {
-      await updateItem(event).then(toast.success("Updated"));
+      await updateItem({
+        ...event,
+        googleCalendarEventId: activeItem.googleCalendarEventId,
+      }).then(toast.success("Updated"));
     } catch (error) {
       toast.error(error);
     }
@@ -67,7 +71,9 @@ const Calendar = () => {
 
   const handleDelete = async () => {
     setOpen(false);
-    await deleteItem(activeItem._id).then(toast.success("Deleted"));
+    await deleteItem(activeItem._id, activeItem.googleCalendarEventId).then(
+      toast.success("Deleted")
+    );
   };
 
   const handleSubmit = (data) => {
@@ -107,90 +113,123 @@ const Calendar = () => {
           flexDirection: "column",
           borderRadius: "5px",
           cursor: "pointer",
+          color: "black",
         }}
       >
-        <Typography variant="caption" sx={{ fontWeight: 600 }}>
+        <Typography
+          variant="caption"
+          sx={{
+            fontWeight: 600,
+            wordWrap: "break-word",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "normal",
+          }}
+        >
           {eventInfo.event.title}
         </Typography>
-        <Typography variant="caption">{formattedDate}</Typography>
-        <Typography variant="caption">{formattedTime}</Typography>
+        <Typography
+          variant="caption"
+          sx={{
+            wordWrap: "break-word",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "normal",
+          }}
+        >
+          {formattedDate}
+        </Typography>
+        <Typography
+          variant="caption"
+          sx={{
+            wordWrap: "break-word",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "normal",
+          }}
+        >
+          {formattedTime}
+        </Typography>
       </Box>
     );
   };
 
   useEffect(() => {
     fetchItems();
-  }, []);
+  }, [open]);
 
   return (
-    <Box>
-      <Toaster />
-      <FullCalendar
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        dateClick={handleDateClick}
-        events={events}
-        eventContent={renderEventContent}
-        displayEventTime
-      />
+    <React.Fragment>
+      <Navbar />
+      <Box sx={{ height: "100vh", padding: 4 }}>
+        <Toaster />
+        <FullCalendar
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+          initialView="dayGridMonth"
+          dateClick={handleDateClick}
+          events={events}
+          eventContent={renderEventContent}
+          displayEventTime
+        />
 
-      <Dialog
-        fullWidth
-        maxWidth={"lg"}
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogContent>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              pb: 2,
-            }}
-          >
-            <Typography variant="h5">Create Event</Typography>
+        <Dialog
+          fullWidth
+          maxWidth={"lg"}
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogContent>
             <Box
               sx={{
                 display: "flex",
+                justifyContent: "space-between",
                 alignItems: "center",
-                gap: 2,
+                pb: 2,
               }}
             >
-              {action === "edit" && (
-                <Button
-                  onClick={handleDelete}
-                  variant="contained"
-                  sx={{
-                    bgcolor: "#990000",
-                    "&:hover": { bgcolor: "#cc0000" },
-                  }}
-                >
-                  Delete
-                </Button>
-              )}
-              <Button
-                onClick={handleClose}
-                variant="contained"
+              <Typography variant="h5">Create Event</Typography>
+              <Box
                 sx={{
-                  bgcolor: "#333333",
-                  "&:hover": { bgcolor: "#595959" },
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 2,
                 }}
               >
-                Close
-              </Button>
+                {action === "edit" && (
+                  <Button
+                    onClick={handleDelete}
+                    variant="contained"
+                    sx={{
+                      bgcolor: "#990000",
+                      "&:hover": { bgcolor: "#cc0000" },
+                    }}
+                  >
+                    Delete
+                  </Button>
+                )}
+                <Button
+                  onClick={handleClose}
+                  variant="contained"
+                  sx={{
+                    bgcolor: "#333333",
+                    "&:hover": { bgcolor: "#595959" },
+                  }}
+                >
+                  Close
+                </Button>
+              </Box>
             </Box>
-          </Box>
-          <EventForm
-            onSubmit={handleSubmit}
-            activeItem={activeItem}
-            action={action}
-          />
-        </DialogContent>
-      </Dialog>
-    </Box>
+            <EventForm
+              onSubmit={handleSubmit}
+              activeItem={activeItem}
+              action={action}
+            />
+          </DialogContent>
+        </Dialog>
+      </Box>
+    </React.Fragment>
   );
 };
 

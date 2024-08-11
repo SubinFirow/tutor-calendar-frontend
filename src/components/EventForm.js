@@ -26,7 +26,28 @@ const EventForm = ({ onSubmit, activeItem, action }) => {
     initialValues: activeItem,
     validationSchema,
     onSubmit: (values) => {
-      onSubmit(values);
+      const { date, time } = values;
+
+      const dateTime = new Date(`${date}T${time}`);
+
+      const year = dateTime.getFullYear();
+      const month = String(dateTime.getMonth() + 1).padStart(2, "0");
+      const day = String(dateTime.getDate()).padStart(2, "0");
+      const hours = String(dateTime.getHours()).padStart(2, "0");
+      const minutes = String(dateTime.getMinutes()).padStart(2, "0");
+      const seconds = String(dateTime.getSeconds()).padStart(2, "0");
+
+      const offset = dateTime.getTimezoneOffset();
+      const offsetHours = String(Math.abs(Math.floor(offset / 60))).padStart(
+        2,
+        "0"
+      );
+      const offsetMinutes = String(Math.abs(offset % 60)).padStart(2, "0");
+      const offsetSign = offset > 0 ? "-" : "+";
+
+      const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${offsetSign}${offsetHours}:${offsetMinutes}`;
+
+      onSubmit({ ...values, date: formattedDateTime });
     },
   });
 
