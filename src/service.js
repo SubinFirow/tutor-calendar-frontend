@@ -76,7 +76,8 @@ export const patchItem = (id, data) => {
 };
 
 export const loginUser = () => {
-  window.location.href = "http://localhost:8000/auth/google";
+  window.location.href =
+    "https://tutor-calendar-backend.onrender.com/auth/google";
 };
 
 export const searchItems = (query) => {
